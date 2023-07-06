@@ -12,10 +12,6 @@ const PoseEstimation = () => {
 
   const [model, setModel] = useState();
 
-  function toggle_webcam() {
-    isStop = !isStop;
-  }
-
   const playAud = (src) => {
     console.log("src", src, "currentSrc", currentSrc);
     if (src !== currentSrc) {
