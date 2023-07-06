@@ -5,7 +5,6 @@ const PoseEstimation = () => {
   const containerRef = useRef();
   const cameraRef = useRef([]);
 
-  const [streams, setStreams] = useState([]);
   const [predictions, setPredictions] = useState([]);
   let myAud = null;
   let currentSrc = null;
