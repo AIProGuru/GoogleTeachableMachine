@@ -12,7 +12,6 @@ const PoseAndImageClassification = () => {
   const [detectedImage, setDetectedImage] = useState('');
   let myAud = null;
   let currentSrc = null;
-  let isStop = false;
 
   const playAud = (src) => {
     console.log('src', src, 'currentSrc', currentSrc);
@@ -130,12 +129,14 @@ const PoseAndImageClassification = () => {
       console.error('Error accessing webcam:', error);
     }
   };
-
+  
+  /* eslint-disable */
   useEffect(() => {
     // Load the model when the component mounts
     loadModels();
   }, []);
-
+  /* eslint-enable */
+  
   useEffect(() => {
     if (
       containerRef.current.children &&
@@ -155,6 +156,7 @@ const PoseAndImageClassification = () => {
           const { pose, posenetOutput } = await poseModel.estimatePose(
             cameraRef.current[i]
           );
+          
           const posePredictionData = await poseModel.predict(posenetOutput);
           setPredictions((prevState) => {
             const updatedPredictions = [...prevState];
