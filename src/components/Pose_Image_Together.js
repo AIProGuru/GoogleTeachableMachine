@@ -1,13 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as tmPose from '@teachablemachine/pose';
 import * as tmImage from '@teachablemachine/image';
-import { models } from '@tensorflow/tfjs';
 
 const PoseAndImageClassification = () => {
   const containerRef = useRef();
   const cameraRef = useRef([]);
 
-  const [streams, setStreams] = useState([]);
   const [predictions, setPredictions] = useState([]);
   const [poseModel, setPoseModel] = useState(null);
   const [imageModel, setImageModel] = useState(null);
@@ -15,10 +13,6 @@ const PoseAndImageClassification = () => {
   let myAud = null;
   let currentSrc = null;
   let isStop = false;
-
-  function toggle_webcam() {
-    isStop = !isStop;
-  }
 
   const playAud = (src) => {
     console.log('src', src, 'currentSrc', currentSrc);
@@ -75,11 +69,6 @@ const PoseAndImageClassification = () => {
       myAud.pause();
     }
   };
-
-  useEffect(() => {
-    // Load the model when the component mounts
-    loadModels();
-  }, []);
 
   const [cameraIds, setCameraIds] = useState();
 
@@ -141,6 +130,11 @@ const PoseAndImageClassification = () => {
       console.error('Error accessing webcam:', error);
     }
   };
+
+  useEffect(() => {
+    // Load the model when the component mounts
+    loadModels();
+  }, []);
 
   useEffect(() => {
     if (
