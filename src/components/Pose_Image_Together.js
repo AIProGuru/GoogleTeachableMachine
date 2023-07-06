@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import * as tmPose from '@teachablemachine/pose';
-import * as tmImage from '@teachablemachine/image';
+import React, { useEffect, useRef, useState } from "react";
+import * as tmPose from "@teachablemachine/pose";
+import * as tmImage from "@teachablemachine/image";
 
 const PoseAndImageClassification = () => {
   const containerRef = useRef();
@@ -9,19 +9,19 @@ const PoseAndImageClassification = () => {
   const [predictions, setPredictions] = useState([]);
   const [poseModel, setPoseModel] = useState(null);
   const [imageModel, setImageModel] = useState(null);
-  const [detectedImage, setDetectedImage] = useState('');
+  const [detectedImage, setDetectedImage] = useState("");
   let myAud = null;
   let currentSrc = null;
 
   const playAud = (src) => {
-    console.log('src', src, 'currentSrc', currentSrc);
+    console.log("src", src, "currentSrc", currentSrc);
     const extractFolderPath = (url) => {
       if (url === null) {
         return null;
       }
-      const parts = url.split('/');
+      const parts = url.split("/");
       parts.pop(); // Remove the file name
-      return parts.join('/');
+      return parts.join("/");
     };
     const srcFolder = extractFolderPath(src);
     const currentSrcFolder = extractFolderPath(currentSrc);
@@ -35,29 +35,29 @@ const PoseAndImageClassification = () => {
       currentSrc = src;
       myAud.play().catch((error) => {
         if (
-          error.name === 'NotAllowedError' &&
+          error.name === "NotAllowedError" &&
           error.message ===
             "play() failed because the user didn't interact with the document first"
         ) {
           // Handle the play() request interruption
           // For example, show a button or UI element to allow the user to interact and trigger the audio playback
-          console.log('Audio playback requires user interaction');
+          console.log("Audio playback requires user interaction");
         } else {
-          console.error('Error playing audio:', error);
+          console.error("Error playing audio:", error);
         }
       });
     } else {
       myAud.play().catch((error) => {
         if (
-          error.name === 'NotAllowedError' &&
+          error.name === "NotAllowedError" &&
           error.message ===
             "play() failed because the user didn't interact with the document first"
         ) {
           // Handle the play() request interruption
           // For example, show a button or UI element to allow the user to interact and trigger the audio playback
-          console.log('Audio playback requires user interaction');
+          console.log("Audio playback requires user interaction");
         } else {
-          console.error('Error playing audio:', error);
+          console.error("Error playing audio:", error);
         }
       });
     }
@@ -73,13 +73,13 @@ const PoseAndImageClassification = () => {
 
   const loadModels = async () => {
     const imageModelURL =
-      'https://teachablemachine.withgoogle.com/models/0lEKy97vU/model.json';
+      "https://teachablemachine.withgoogle.com/models/0lEKy97vU/model.json";
     const imageMetadataURL =
-      'https://teachablemachine.withgoogle.com/models/0lEKy97vU/metadata.json';
+      "https://teachablemachine.withgoogle.com/models/0lEKy97vU/metadata.json";
     const poseModelURL =
-      'https://teachablemachine.withgoogle.com/models/iWziCF_1p/model.json';
+      "https://teachablemachine.withgoogle.com/models/iWziCF_1p/model.json";
     const poseMetadataURL =
-      'https://teachablemachine.withgoogle.com/models/iWziCF_1p/metadata.json';
+      "https://teachablemachine.withgoogle.com/models/iWziCF_1p/metadata.json";
 
     // const modelURL = '/model.json';
     // const metadataURL = '/metadata.json';
@@ -92,7 +92,7 @@ const PoseAndImageClassification = () => {
     const ids = await getCameraDeviceIds();
     console.log(ids);
     if (ids.length === 0) {
-      alert('no camera found');
+      alert("no camera found");
       return;
     }
     setCameraIds(ids);
@@ -102,12 +102,12 @@ const PoseAndImageClassification = () => {
     try {
       const devices = await navigator.mediaDevices.enumerateDevices();
       const cameraDevices = devices.filter(
-        (device) => device.kind === 'videoinput'
+        (device) => device.kind === "videoinput"
       );
       const cameraDeviceIds = cameraDevices.map((device) => device.deviceId);
       return cameraDeviceIds;
     } catch (error) {
-      console.error('Error enumerating video devices:', error);
+      console.error("Error enumerating video devices:", error);
       return [];
     }
   }
@@ -126,17 +126,16 @@ const PoseAndImageClassification = () => {
         cameraRef.current[i].srcObject = streams[i];
       }
     } catch (error) {
-      console.error('Error accessing webcam:', error);
+      console.error("Error accessing webcam:", error);
     }
   };
-  
+
   /* eslint-disable */
   useEffect(() => {
     // Load the model when the component mounts
     loadModels();
   }, []);
-  /* eslint-enable */
-  
+
   useEffect(() => {
     if (
       containerRef.current.children &&
@@ -145,7 +144,7 @@ const PoseAndImageClassification = () => {
       requestWebcamPermission().then(() => estimatePoseAndClassifyImage());
     }
   }, [containerRef.current, poseModel, imageModel]);
-
+  /* eslint-enable */
   const estimatePoseAndClassifyImage = async () => {
     if (poseModel && imageModel) {
       let maxTopPose = null;
@@ -156,7 +155,7 @@ const PoseAndImageClassification = () => {
           const { pose, posenetOutput } = await poseModel.estimatePose(
             cameraRef.current[i]
           );
-          
+          console.log("pose", pose);
           const posePredictionData = await poseModel.predict(posenetOutput);
           setPredictions((prevState) => {
             const updatedPredictions = [...prevState];
@@ -188,15 +187,15 @@ const PoseAndImageClassification = () => {
         (maxTopPose.probability.toFixed(2) >= 0.75 ||
           maxTopImage.probability.toFixed(2) >= 0.75)
       ) {
-        console.log('Image', maxTopImage.probability);
-        console.log('Pose', maxTopPose.probability);
+        console.log("Image", maxTopImage.probability);
+        console.log("Pose", maxTopPose.probability);
         setDetectedImage(maxTopImage.className); // Update the detected image name
 
         if (maxTopImage.probability >= maxTopPose.probability) {
           pauseAud();
           const rndInt = Math.floor(Math.random() * 2) + 1;
           playAud(`/audio-folder/${maxTopImage.className}/${rndInt}.mp3`);
-          console.log('Object:', maxTopImage.className);
+          console.log("Object:", maxTopImage.className);
         } else {
           pauseAud();
           const rndInt = Math.floor(Math.random() * 2) + 1;
@@ -204,7 +203,7 @@ const PoseAndImageClassification = () => {
         }
       } else {
         pauseAud();
-        setDetectedImage('null');
+        setDetectedImage("null");
       }
     }
     setTimeout(() => {
